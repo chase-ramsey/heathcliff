@@ -34,11 +34,8 @@ class Server(CGIHTTPRequestHandler):
             self.wfile.write(json.dumps({'messages': messages}).encode('utf-8'))
 
     def write_message(self):
-        data = ''
-        buf = self.request.recv(2048)
-        while buf:
-            data += buf.decode('utf-8')
-            buf = self.request.recv(2048)
+        data = self.request.recv(4096).decode('utf-8')
+        self.wfile.write(json.dumps({'success': 'true'}).encode('utf-8'))
 
         with open('test.txt', 'a') as f:
             if data:

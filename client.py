@@ -6,7 +6,7 @@ import sys
 # Then we take a message we've written and post it.
 
 def main(ip, custom_port=None):
-    
+
     # check that we have an ip address
     if len(ip) == 0:
         sys.exit("You need to give an ip address or a domain name to connect to")
@@ -24,8 +24,12 @@ def main(ip, custom_port=None):
     # main loop
     on = True
     while on:
-        
-        message = input('> ').encode('utf-8')
+
+        try:
+            message = input('> ').encode('utf-8')
+        except KeyboardInterrupt:
+            break
+
         if message.decode('utf-8') == 'quit':
             sys.exit()
         r = requests.post(address, data=message)
@@ -37,6 +41,6 @@ if __name__ == '__main__':
         ip = sys.argv[1]
         port = sys.argv[2]
         main(ip, port)
-    except IndexError:
+    except (IndexError, KeyboardInterrupt):
         main(ip)
 
