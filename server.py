@@ -1,5 +1,7 @@
 import json
+from datetime import datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from pytz import timezone
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -39,7 +41,8 @@ class Handler(BaseHTTPRequestHandler):
 
         with open('test.txt', 'a') as f:
             if data:
-                f.write('{}\n'.format(data))
+                now_str = datetime.now(tz=timezone('America/Chicago')).strftime('%Y-%m-%d %H:%M:%S%z')
+                f.write('[{}] {}\n'.format(now_str, data))
 
         self.wfile.write(json.dumps({'success': 'true'}).encode('utf-8'))
 
