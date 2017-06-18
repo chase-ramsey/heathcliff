@@ -1,8 +1,8 @@
 import json
-from http.server import CGIHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
-class Server(CGIHTTPRequestHandler):
+class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if False:
             self.send_response_only(404, 'Not found')
@@ -34,16 +34,18 @@ class Server(CGIHTTPRequestHandler):
             self.wfile.write(json.dumps({'messages': messages}).encode('utf-8'))
 
     def write_message(self):
-        data = self.request.recv(4096).decode('utf-8')
-        self.wfile.write(json.dumps({'success': 'true'}).encode('utf-8'))
+        raw = self.rfile.read(int(self.headers['Content-length']))
+        data = raw.decode('utf-8')
 
         with open('test.txt', 'a') as f:
             if data:
                 f.write('{}\n'.format(data))
 
+        self.wfile.write(json.dumps({'success': 'true'}).encode('utf-8'))
 
 
-def run(server_class=HTTPServer, handler_class=Server):
+
+def run(server_class=HTTPServer, handler_class=Handler):
     server_address = ('', 5000)
     httpd = server_class(server_address, handler_class)
     httpd.serve_forever()

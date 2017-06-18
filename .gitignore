@@ -2,5 +2,5 @@
 *.pyc
 *~
 *.txt
+*.json
 .python-version
-
